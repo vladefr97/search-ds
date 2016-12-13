@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class HashTableChain<E extends Comparable<E>> implements ISet<E> {
+public class ChainHashTable<E extends Comparable<E>> implements ISet<E> {
 
     class Node {
         E value;
@@ -33,11 +33,11 @@ public class HashTableChain<E extends Comparable<E>> implements ISet<E> {
     private Object[] table;
     private int size;
 
-    public HashTableChain() {
+    public ChainHashTable() {
         this(null);
     }
 
-    public HashTableChain(Comparator<E> comparator) {
+    public ChainHashTable(Comparator<E> comparator) {
         this.comparator = comparator;
         this.table = new Object[INITIAL_CAPACITY];
     }
@@ -162,7 +162,7 @@ public class HashTableChain<E extends Comparable<E>> implements ISet<E> {
         }
         table.print();
         */
-        HashTableChain<String> ts = new HashTableChain<>();
+        ChainHashTable<String> ts = new ChainHashTable<>();
         ts.add("abc");
         ts.add("abc");
         ts.add("bcd");
