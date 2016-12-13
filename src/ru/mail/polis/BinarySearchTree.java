@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-/**
- * Created by Nechaev Mikhail
- * Since 13/12/16.
- */
 public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> {
 
     class Node {

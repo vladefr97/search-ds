@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by Nechaev Mikhail
- * Since 13/12/16.
- */
 public class HashTableChain<E extends Comparable<E>> implements ISet<E> {
 
     class Node {

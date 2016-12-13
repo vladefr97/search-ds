@@ -3,10 +3,6 @@ package ru.mail.polis;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by Nechaev Mikhail
- * Since 13/12/16.
- */
 public class RedBlackTree<E extends Comparable<E>> implements ISortedSet<E> {
 
     private int size;

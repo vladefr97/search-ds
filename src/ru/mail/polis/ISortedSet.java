@@ -2,10 +2,6 @@ package ru.mail.polis;
 
 import java.util.List;
 
-/**
- * Created by Nechaev Mikhail
- * Since 13/12/16.
- */
 public interface ISortedSet<E extends Comparable<E>> extends ISet<E> {
 
     /**

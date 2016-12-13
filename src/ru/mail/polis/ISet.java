@@ -1,9 +1,5 @@
 package ru.mail.polis;
 
-/**
- * Created by Nechaev Mikhail
- * Since 13/12/16.
- */
 public interface ISet<E extends Comparable<E>> {
 
     /**
