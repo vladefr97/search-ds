@@ -132,6 +132,7 @@ public class ChainHashTable<E extends Comparable<E>> implements ISet<E> {
                 Node curr = node;
                 while (curr != null) {
                     Node next = curr.next;
+                    //FIXME: insert value in head (all unique)
                     add(curr.value);
                     curr.next = null;
                     curr.value = null;
