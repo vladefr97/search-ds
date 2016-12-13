@@ -46,17 +46,17 @@ public class RedBlackTree<E extends Comparable<E>> implements ISortedSet<E> {
     }
 
     @Override
-    public boolean contains(E el) {
+    public boolean contains(E value) {
         return false;
     }
 
     @Override
-    public boolean add(E el) {
+    public boolean add(E value) {
         return false;
     }
 
     @Override
-    public boolean remove(E el) {
+    public boolean remove(E value) {
         return false;
     }
 

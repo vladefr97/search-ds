@@ -21,23 +21,23 @@ public interface ISet<E extends Comparable<E>> {
     boolean isEmpty();
 
     /**
-     * @param el element whose presence in this set is to be tested
+     * @param value element whose presence in this set is to be tested
      * @return true if this set contains the specified element
      * @throws NullPointerException if the specified element is null
      */
-    boolean contains(E el);
+    boolean contains(E value);
 
     /**
-     * @param el element to be added to this set
+     * @param value element to be added to this set
      * @return true if this set did not already contain the specified element
      * @throws NullPointerException if the specified element is null
      */
-    boolean add(E el);
+    boolean add(E value);
 
     /**
-     * @param el object to be removed from this set, if present
+     * @param value object to be removed from this set, if present
      * @return true if this set contained the specified element
      * @throws NullPointerException if the specified element is null
      */
-    boolean remove(E el);
+    boolean remove(E value);
 }
