@@ -10,13 +10,13 @@ import java.util.TreeSet;
  * Created by Nechaev Mikhail
  * Since 24/12/16.
  */
-public class Test {
+public class TestTreeSet {
 
     private final int MASK = 0b1111;
     private final Random r = new Random();
 
     public static void main(String[] args) {
-        new Test().run(0b0100);
+        new TestTreeSet().run(0b0100);
     }
 
     private final int TEST = 0b0001;
