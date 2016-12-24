@@ -3,10 +3,6 @@ package ru.mail.polis;
 public interface ISet<E extends Comparable<E>> {
 
     /**
-     * Returns the number of elements in this set (its cardinality).  If this
-     * set contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
-     * <tt>Integer.MAX_VALUE</tt>.
-     *
      * @return the number of elements in this set (its cardinality)
      */
     int size();
