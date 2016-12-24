@@ -30,34 +30,26 @@ public class Test {
     private void smallTest(ISortedSet<Integer> set) {
         TreeSet<Integer> OK = new TreeSet<>();
         for (int i = 0; i < 10; i++) {
-            assert set.contains(i) == OK.contains(i);
-            assert set.add(i) == OK.add(i);
-            assert set.contains(i) == OK.contains(i);
-            assert set.add(i) == OK.add(i);
+            check(OK, set, i, true);
         }
         for (int i = 10; i >= 0; i--) {
-            assert set.contains(i) == OK.contains(i);
-            assert set.remove(i) == OK.remove(i);
-            assert set.contains(i) == OK.contains(i);
-            assert set.remove(i) == OK.remove(i);
+            check(OK, set, i, false);
+        }
+        for (int i = 0; i >= -10; i--) {
+            check(OK, set, i, false);
+        }
+        for (int i = -10; i < 0; i++) {
+            check(OK, set, i, true);
         }
     }
 
     private void bigRandomTest(ISortedSet<Integer> set) {
         TreeSet<Integer> OK = new TreeSet<>();
         for (int i = 0; i < 1000; i++) {
-            int next = r.nextInt(1000);
-            assert set.contains(next) == OK.contains(next);
-            assert set.add(next) == OK.add(next);
-            assert set.contains(next) == OK.contains(next);
-            assert set.add(next) == OK.add(next);
+            check(OK, set, r.nextInt(1000), true);
         }
         for (int i = 0; i < 1000; i++) {
-            int next = r.nextInt(1000);
-            assert set.contains(next) == OK.contains(next);
-            assert set.remove(next) == OK.remove(i);
-            assert set.contains(next) == OK.contains(next);
-            assert set.remove(next) == OK.remove(i);
+            check(OK, set, r.nextInt(1000), false);
         }
     }
 
@@ -78,10 +70,10 @@ public class Test {
             testTree("avlE", new AVLTree<Integer>(EVEN_FIRST), EVEN_FIRST);
         }
         if (test(2)) {
-            testTree("RB", new RedBlackTree(), null);
+            testTree("RB", new RedBlackTree<Integer>(), null);
         }
         if (test(3)) {
-            testTree("RBE", new RedBlackTree(), EVEN_FIRST);
+            testTree("RBE", new RedBlackTree<Integer>(), EVEN_FIRST);
         }
     }
 
@@ -103,26 +95,15 @@ public class Test {
                 System.out.println("OK");
             }
             for (int i = 0; i < 15; i++) {
-                assert OK.contains(i) == set.contains(i);
-                assert OK.add(i) == set.add(i);
-                assert OK.contains(i) == set.contains(i);
-                assert OK.add(i) == set.add(i);
+                check(OK, set, i, true);
             }
             System.out.println(set.inorderTraverse());
             assert set.size() == 15;
             assert OK.isEmpty() == set.isEmpty();
-            assert OK.last().equals(set.last());
-            assert OK.first().equals(set.first());
             for (int i = 15; i < 30; i++) {
-                assert OK.contains(i) == set.contains(i);
-                assert OK.add(i) == set.add(i);
-                assert OK.contains(i) == set.contains(i);
-                assert OK.add(i) == set.add(i);
+                check(OK, set, i, true);
                 if (i % 2 == 0) {
-                    assert OK.contains(i) == set.contains(i);
-                    assert OK.remove(i) == set.remove(i);
-                    assert OK.contains(i) == set.contains(i);
-                    assert OK.remove(i) == set.remove(i);
+                    check(OK, set, i, false);
                 }
             }
             System.out.println(set.inorderTraverse());
@@ -132,14 +113,29 @@ public class Test {
             assert OK.contains(101) == set.contains(101);
             assert OK.contains(15) == set.contains(15);
             for (int i = 100; i >= 0; i--) {
-                assert OK.contains(i) == set.contains(i);
-                assert OK.remove(i) == set.remove(i);
-                assert OK.contains(i) == set.contains(i);
-                assert OK.remove(i) == set.remove(i);
+                check(OK, set, i, false);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.err.println("^^^^^^^^^^^^^^^^^^^^^ " + name + " ^^^^^^^^^^^^^^^^^^^");
+    }
+
+    private void check(SortedSet<Integer> OK, ISortedSet<Integer> set, int value, boolean add) {
+        assert OK.contains(value) == set.contains(value);
+        assert OK.first().equals(set.first());
+        assert OK.last().equals(set.last());
+        assert OK.size() == set.size();
+        assert OK.contains(value) == set.contains(value);
+        if (add) assert OK.add(value) == set.add(value);
+            else assert OK.remove(value) == set.remove(value);
+        assert OK.size() == set.size();
+        assert OK.contains(value) == set.contains(value);
+        if (add) assert OK.add(value) == set.add(value);
+           else assert OK.remove(value) == set.remove(value);
+        assert OK.size() == set.size();
+        assert OK.first().equals(set.first());
+        assert OK.last().equals(set.last());
+        assert OK.contains(value) == set.contains(value);
     }
 }
