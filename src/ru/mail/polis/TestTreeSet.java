@@ -16,16 +16,18 @@ public class TestTreeSet {
     private final Random r = new Random();
 
     public static void main(String[] args) {
-        new TestTreeSet().run(0b0100);
+        new TestTreeSet().run();
     }
 
-    private final int TEST = 0b0001;
+    private final int TEST = 0b0011;
 
     Comparator<Integer> EVEN_FIRST = (v1, v2) -> {
         // Even first
         final int c = Integer.compare(v1 % 2, v2 % 2);
         return c != 0 ? c : Integer.compare(v1, v2);
     };
+
+    Comparator<Integer> ALL_EQUALS = (v1, v2) -> { return 0; };
 
     private void smallTest(ISortedSet<Integer> set) {
         TreeSet<Integer> OK = new TreeSet<>();
@@ -53,16 +55,29 @@ public class TestTreeSet {
         }
     }
 
+    private void argh() {
+        ISortedSet<Integer> set = new AVLTree<>();
+        for (int i = 0; i < 10; i++) {
+            System.out.print(set.add(i) ? "T" : "F");
+        }
+        System.out.println();
+        for (int i = 10; i >= 0; i--) {
+            System.out.print(set.remove(i) ? "T" : "F");
+        }
+    }
+
     private void EX() {
         System.exit(0);
     }
 
-    private void run(int idx) {
+    private void run() {
+//        argh();EX();
+        checkEmptyAndNull();
         smallTest(new AVLTree<Integer>());
         smallTest(new RedBlackTree<Integer>());
         bigRandomTest(new AVLTree<Integer>());
         bigRandomTest(new RedBlackTree<Integer>());
-        EX();
+//        EX();
         if (test(0)) {
             testTree("avl", new AVLTree<Integer>(), null);
         }
@@ -85,15 +100,6 @@ public class TestTreeSet {
         SortedSet<Integer> OK = new TreeSet<>(comp);
         System.err.println("-------------------- " + name + " -------------------");
         try {
-            assert set.size() == 0;
-            assert set.isEmpty();
-            try {
-                System.out.println(set.last());
-                System.out.println(set.first());
-                assert false;
-            } catch (NoSuchElementException e) {
-                System.out.println("OK");
-            }
             for (int i = 0; i < 15; i++) {
                 check(OK, set, i, true);
             }
@@ -123,8 +129,10 @@ public class TestTreeSet {
 
     private void check(SortedSet<Integer> OK, ISortedSet<Integer> set, int value, boolean add) {
         assert OK.contains(value) == set.contains(value);
-        assert OK.first().equals(set.first());
-        assert OK.last().equals(set.last());
+        if (!OK.isEmpty()) {
+            assert OK.first().equals(set.first());
+            assert OK.last().equals(set.last());
+        }
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
         if (add) assert OK.add(value) == set.add(value);
@@ -134,8 +142,32 @@ public class TestTreeSet {
         if (add) assert OK.add(value) == set.add(value);
            else assert OK.remove(value) == set.remove(value);
         assert OK.size() == set.size();
-        assert OK.first().equals(set.first());
-        assert OK.last().equals(set.last());
         assert OK.contains(value) == set.contains(value);
+        if (!OK.isEmpty()) {
+            assert OK.first().equals(set.first());
+            assert OK.last().equals(set.last());
+        }
+    }
+
+    private void checkEmptyAndNull() {
+        checkEmptyAndNull(new AVLTree<>());
+        checkEmptyAndNull(new RedBlackTree<>());
+    }
+
+    private void checkEmptyAndNull(ISortedSet<Integer> set) {
+        assert set.isEmpty();
+        assert set.size() == 0;
+        try {
+            set.first(); assert false;
+        } catch (NoSuchElementException e) {}
+        try {
+            set.last(); assert false;
+        } catch (NoSuchElementException e) {}
+        try {
+            set.add(null); assert false;
+        } catch (NullPointerException e) {}
+        try {
+            set.remove(null); assert false;
+        } catch (NullPointerException e) {}
     }
 }
