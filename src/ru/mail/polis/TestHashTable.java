@@ -10,30 +10,28 @@ import java.util.Set;
  */
 public class TestHashTable {
 
-    private final Random r = new Random();
+    private final Random random = new Random();
 
     public static void main(String[] args) {
         new TestHashTable().run();
     }
 
     private void run() {
-//        argh();
+        pre();
         t0();
         t1();
         t2();
         t3();
     }
 
-    private void argh() {
+    private void pre() {
         Set<String> OK = new HashSet<>();
-        OpenHashTable<String> set = new OpenHashTable<>();
+        ISet<String> set = new OpenHashTable<>();
         String value = "b";
-        for (int i = 0; i <4; i++) {
+        for (int i = 0; i < 5; i++) {
             value = value + "a";
-            System.out.println("i = " + i + ", val = " + value);
-            assert OK.add(value) == set.add(value);
-            set.print();
-            assert OK.contains(value) == set.contains(value);
+            System.err.println("A i = " + i + ", val = "
+                    + value + ", " + set.add(value) + ", " + set.contains(value));
         }
     }
 
@@ -42,29 +40,32 @@ public class TestHashTable {
         assert set.isEmpty();
         assert set.size() == 0;
         try {
-            set.add(null); assert false;
-        } catch (NullPointerException e) {}
+            set.add(null);
+            assert false;
+        } catch (NullPointerException e) {
+            /* empty */
+        }
         try {
-            set.remove(null); assert false;
-        } catch (NullPointerException e) {}
+            set.remove(null);
+            assert false;
+        } catch (NullPointerException e) {
+            /* empty */
+        }
     }
 
     private void t1() {
         Set<String> OK = new HashSet<>();
-        OpenHashTable<String> set = new OpenHashTable<>();
+        ISet<String> set = new OpenHashTable<>();
         final int LEN = 20;
         String value = "b";
         for (int i = 0; i < LEN; i++) {
             value = value + "a";
-            System.out.println("i = " + i + ", val = " + value);
             check(OK, set, value, true);
         }
-        set.print();
         for (int i = LEN; i >= 0; i--) {
             value = value.substring(0, value.length() - 1);
             check(OK, set, value, false);
         }
-        set.print();
 
     }
 
@@ -75,6 +76,7 @@ public class TestHashTable {
             check(OK, set, value, true);
         }
         for (char value = 'n'; value >= 'h'; value--) {
+            String v = "" + value;
             check(OK, set, value, false);
         }
         for (char value = 'h'; value >= 'a'; value--) {
@@ -99,25 +101,31 @@ public class TestHashTable {
     private String gen(int len) {
         String s = "";
         for (int i = 0; i < len; i++) {
-            s += (char) r.nextInt(26) + 'a';
+            s += (char) random.nextInt(26) + 'a';
         }
         return s;
     }
 
     private void check(Set<String> OK, ISet<String> set, char c, boolean add) {
-        check(OK, set, ""+c, add);
+        check(OK, set, "" + c, add);
     }
 
     private void check(Set<String> OK, ISet<String> set, String value, boolean add) {
         assert OK.contains(value) == set.contains(value);
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
-        if (add) assert OK.add(value) == set.add(value);
-        else assert OK.remove(value) == set.remove(value);
+        if (add) {
+            assert OK.add(value) == set.add(value);
+        } else {
+            assert OK.remove(value) == set.remove(value);
+        }
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
-        if (add) assert OK.add(value) == set.add(value);
-        else assert OK.remove(value) == set.remove(value);
+        if (add) {
+            assert OK.add(value) == set.add(value);
+        } else {
+            assert OK.remove(value) == set.remove(value);
+        }
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
     }

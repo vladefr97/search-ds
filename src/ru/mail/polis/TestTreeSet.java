@@ -1,13 +1,15 @@
 package ru.mail.polis;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
-
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 
 /**
  * Created by Nechaev Mikhail
@@ -15,73 +17,65 @@ import javax.swing.plaf.synth.SynthOptionPaneUI;
  */
 public class TestTreeSet {
 
-    private final Random r = new Random();
+    private final Random random = new Random();
 
     private final Comparator<Integer> EVEN_FIRST = (v1, v2) -> {
-        // Even first
         final int c = Integer.compare(v1 % 2, v2 % 2);
         return c != 0 ? c : Integer.compare(v1, v2);
     };
+    private final Comparator<Integer> ALL_EQUALS = (v1, v2) -> 0;
 
-    Comparator<Integer> ALL_EQUALS = (v1, v2) -> { return 0; };
+    private final List<Comparator<Integer>> comparators = Arrays.asList(
+            null
+            , EVEN_FIRST
+            , ALL_EQUALS
+    );
 
     public static void main(String[] args) {
         new TestTreeSet().run();
     }
 
     private void run() {
-        run2(() -> {
-            argh();
+        run(() -> {
+            pre();
             return null;
         });
-        AVL();
-        RB();
+        test(AVLTree.class.getName());
+        test(RedBlackTree.class.getName());
     }
 
-    private void AVL() {
-        run2(() -> { checkEmptyAndNull(new AVLTree<>()); return null; });
-        run2(() -> { smallTest(new AVLTree<Integer>()); return null; });
-        run2(() -> {
-            bigRandomTest(new AVLTree<Integer>());
-            return null;
-        });
-        run2(() -> {
-            testTree("AVL", new AVLTree<Integer>(), null);
-            return null;
-        });
-        run2(() -> {
-            testTree("AVLE", new AVLTree<Integer>(EVEN_FIRST), EVEN_FIRST);
-            return null;
-        });
-    }
-
-    private void RB() {
-        run2(() -> { checkEmptyAndNull(new RedBlackTree<>()); return null; });
-        run2(() -> { smallTest(new RedBlackTree<Integer>()); return null; });
-        run2(() -> {
-            bigRandomTest(new RedBlackTree<Integer>());
-            return null;
-        });
-        run2(() -> {
-            testTree("RB", new RedBlackTree<Integer>(), null);
-            return null;
-        });
-        run2(() -> {
-            testTree("RBE", new RedBlackTree<Integer>(EVEN_FIRST), EVEN_FIRST);
-            return null;
-        });
-    }
-
-    private void argh() {
+    private void pre() {
         int LEN = 10;
         SortedSet<Integer> OK = new TreeSet<>();
-        ISortedSet<Integer> set = new AVLTree<>();
-//      ISortedSet<Integer> set = new RedBlackTree<>();
+//        ISortedSet<Integer> set = new AVLTree<>();
+        ISortedSet<Integer> set = new RedBlackTree<>();
         for (int value = 0; value < LEN; value++) {
             check(OK, set, value, true);
         }
         for (int value = LEN; value >= 0; value--) {
             check(OK, set, value, false);
+        }
+    }
+
+    private void test(String className) {
+        run(() -> {
+            checkEmptyAndNull(create(className, null));
+            return null;
+        });
+        run(() -> {
+            smallTest(create(className, null));
+            return null;
+        });
+        run(() -> {
+            bigRandomTest(create(className, null));
+            return null;
+        });
+        for (ListIterator<Comparator<Integer>> iterator = comparators.listIterator(); iterator.hasNext(); ) {
+            Comparator<Integer> comp = iterator.next();
+            run(() -> {
+                testTree(iterator.previousIndex(), new TreeSet<>(comp), create(className, comp));
+                return null;
+            });
         }
     }
 
@@ -103,17 +97,16 @@ public class TestTreeSet {
 
     private void bigRandomTest(ISortedSet<Integer> set) {
         SortedSet<Integer> OK = new TreeSet<>();
-        for (int i = 0; i < 1000 ; i++) {
-            check(OK, set, r.nextInt(1000), true);
+        for (int i = 0; i < 1000; i++) {
+            check(OK, set, random.nextInt(1000), true);
         }
         for (int i = 0; i < 1000; i++) {
-            check(OK, set, r.nextInt(1000), false);
+            check(OK, set, random.nextInt(1000), false);
         }
     }
 
-    private void testTree(String name, ISortedSet<Integer> set, Comparator<Integer> comp) {
-        SortedSet<Integer> OK = new TreeSet<>(comp);
-        System.out.println("-------------------- " + name + " -------------------");
+    private void testTree(int cmpIdx, SortedSet<Integer> OK, ISortedSet<Integer> set) {
+        System.out.println("-------------------- " + cmpIdx + " -------------------");
         for (int i = 0; i < 15; i++) {
             check(OK, set, i, true);
         }
@@ -135,7 +128,7 @@ public class TestTreeSet {
         for (int i = 100; i >= 0; i--) {
             check(OK, set, i, false);
         }
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^ " + name + " ^^^^^^^^^^^^^^^^^^^");
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^ " + cmpIdx + " ^^^^^^^^^^^^^^^^^^^");
     }
 
     private void check(SortedSet<Integer> OK, ISortedSet<Integer> set, int value, boolean add) {
@@ -146,12 +139,18 @@ public class TestTreeSet {
         }
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
-        if (add) assert OK.add(value) == set.add(value);
-            else assert OK.remove(value) == set.remove(value);
+        if (add) {
+            assert OK.add(value) == set.add(value);
+        } else {
+            assert OK.remove(value) == set.remove(value);
+        }
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
-        if (add) assert OK.add(value) == set.add(value);
-           else assert OK.remove(value) == set.remove(value);
+        if (add) {
+            assert OK.add(value) == set.add(value);
+        } else {
+            assert OK.remove(value) == set.remove(value);
+        }
         assert OK.size() == set.size();
         assert OK.contains(value) == set.contains(value);
         if (!OK.isEmpty()) {
@@ -164,24 +163,45 @@ public class TestTreeSet {
         assert set.isEmpty();
         assert set.size() == 0;
         try {
-            set.first(); assert false;
-        } catch (NoSuchElementException e) {}
+            set.first();
+            assert false;
+        } catch (NoSuchElementException e) {
+            /* empty */
+        }
         try {
-            set.last(); assert false;
-        } catch (NoSuchElementException e) {}
+            set.last();
+            assert false;
+        } catch (NoSuchElementException e) {
+            /* empty */
+        }
         try {
-            set.add(null); assert false;
-        } catch (NullPointerException e) {}
+            set.add(null);
+            assert false;
+        } catch (NullPointerException e) {
+            /* empty */
+        }
         try {
-            set.remove(null); assert false;
-        } catch (NullPointerException e) {}
+            set.remove(null);
+            assert false;
+        } catch (NullPointerException e) {
+            /* empty */
+        }
     }
 
-    public void run2(Callable<Void> callable) {
+    public void run(Callable<Void> callable) {
         try {
             callable.call();
         } catch (AssertionError | Exception ae) {
             ae.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ISortedSet<Integer> create(String className, Comparator<Integer> comparator) {
+        try {
+            return (ISortedSet<Integer>) Class.forName(className).getConstructor(Comparator.class).newInstance(comparator);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new AssertionError(e);
         }
     }
 }
