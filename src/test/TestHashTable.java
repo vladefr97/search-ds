@@ -1,8 +1,11 @@
-package ru.mail.polis;
+package test;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+
+import ru.mail.polis.ISet;
+import ru.mail.polis.OpenHashTable;
 
 /**
  * Created by Nechaev Mikhail

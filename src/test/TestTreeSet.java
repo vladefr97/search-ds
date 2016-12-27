@@ -1,4 +1,4 @@
-package ru.mail.polis;
+package test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -10,6 +10,10 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
+
+import ru.mail.polis.AVLTree;
+import ru.mail.polis.ISortedSet;
+import ru.mail.polis.RedBlackTree;
 
 /**
  * Created by Nechaev Mikhail
