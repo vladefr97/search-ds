@@ -20,6 +20,4 @@ public interface ISortedSet<E extends Comparable<E>> extends ISet<E> {
      * @return list of element in sorting ordering
      */
     List<E> inorderTraverse();
-
-    Node<E> getRoot();
 }

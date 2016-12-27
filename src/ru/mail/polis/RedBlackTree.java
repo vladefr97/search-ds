@@ -6,24 +6,6 @@ import java.util.List;
 //TODO: write code here
 public class RedBlackTree<E extends Comparable<E>> implements ISortedSet<E> {
 
-    class RBNode<E extends Comparable<E>> extends Node<E> {
-
-        private RBNode<E> parent;
-
-        public RBNode(E value) {
-            super(value);
-        }
-
-        public RBNode<E> getParent() {
-            return parent;
-        }
-
-        public void setParent(RBNode<E> parent) {
-            this.parent = parent;
-        }
-    }
-
-    private RBNode<E> root;
     private int size;
     private final Comparator<E> comparator;
 
@@ -73,11 +55,6 @@ public class RedBlackTree<E extends Comparable<E>> implements ISortedSet<E> {
     @Override
     public boolean remove(E value) {
         return false;
-    }
-
-    @Override
-    public Node<E> getRoot() {
-        return root;
     }
 
     private int compare(E v1, E v2) {

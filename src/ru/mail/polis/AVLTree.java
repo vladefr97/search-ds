@@ -6,24 +6,7 @@ import java.util.List;
 //TODO: write code here
 public class AVLTree<E extends Comparable<E>> implements ISortedSet<E> {
 
-    class AVLNode<E extends Comparable<E>> extends Node<E> {
-
-        private AVLNode<E> parent;
-
-        public AVLNode(E value) {
-            super(value);
-        }
-
-        public AVLNode<E> getParent() {
-            return parent;
-        }
-
-        public void setParent(AVLNode<E> parent) {
-            this.parent = parent;
-        }
-    }
-
-    private AVLNode<E> root;
+//    private Node root;
     private int size;
     private final Comparator<E> comparator;
 
@@ -73,11 +56,6 @@ public class AVLTree<E extends Comparable<E>> implements ISortedSet<E> {
     @Override
     public boolean remove(E value) {
         return false;
-    }
-
-    @Override
-    public Node<E> getRoot() {
-        return root;
     }
 
     private int compare(E v1, E v2) {
