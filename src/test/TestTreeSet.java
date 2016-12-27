@@ -115,8 +115,6 @@ public class TestTreeSet {
             check(OK, set, i, true);
         }
         System.out.println(set.inorderTraverse());
-        assert set.size() == 15;
-        assert OK.isEmpty() == set.isEmpty();
         for (int i = 15; i < 30; i++) {
             check(OK, set, i, true);
             if (i % 2 == 0) {
@@ -124,11 +122,6 @@ public class TestTreeSet {
             }
         }
         System.out.println(set.inorderTraverse());
-        assert set.size() == 23;
-        assert OK.isEmpty() == set.isEmpty();
-        assert OK.contains(-1) == set.contains(-1);
-        assert OK.contains(101) == set.contains(101);
-        assert OK.contains(15) == set.contains(15);
         for (int i = 100; i >= 0; i--) {
             check(OK, set, i, false);
         }
