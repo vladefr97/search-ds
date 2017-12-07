@@ -1,44 +1,19 @@
 package ru.mail.polis;
 
-import java.util.ArrayList;
+import java.util.AbstractSet;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.SortedSet;
 
-public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> {
+public class BinarySearchTree<E extends Comparable<E>> extends AbstractSet<E> implements SortedSet<E> {
 
-    class Node {
-
-        Node(E value) {
-            this.value = value;
-        }
-
-        E value;
-        Node left;
-        Node right;
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("N{");
-            sb.append("d=").append(value);
-            if (left != null) {
-                sb.append(", l=").append(left);
-            }
-            if (right != null) {
-                sb.append(", r=").append(right);
-            }
-            sb.append('}');
-            return sb.toString();
-        }
-    }
-
+    private final Comparator<E> comparator;
     private Node root;
     private int size;
-    private final Comparator<E> comparator;
-
     public BinarySearchTree() {
-        this.comparator = null;
+        this(null);
     }
 
     public BinarySearchTree(Comparator<E> comparator) {
@@ -46,48 +21,21 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
     }
 
     @Override
-    public E first() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("set is empty, no first element");
-        }
-        Node curr = root;
-        while (curr.left != null) {
-            curr = curr.left;
-        }
-        return curr.value;
+    public Comparator<? super E> comparator() {
+        return comparator;
     }
 
     @Override
-    public E last() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("set is empty, no last element");
-        }
-        Node curr = root;
-        while (curr.right != null) {
-            curr = curr.right;
-        }
-        return curr.value;
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return root == null;
-    }
-
-    @Override
-    public boolean contains(E value) {
+    public boolean contains(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
+        @SuppressWarnings("unchecked")
+        E key = (E) value;
         if (root != null) {
             Node curr = root;
             while (curr != null) {
-                int cmp = compare(curr.value, value);
+                int cmp = compare(curr.value, key);
                 if (cmp == 0) {
                     return true;
                 } else if (cmp < 0) {
@@ -120,7 +68,7 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
                         curr.right = new Node(value);
                         break;
                     }
-                } else if (cmp > 0) {
+                } else /*if (cmp > 0)*/ {
                     if (curr.left != null) {
                         curr = curr.left;
                     } else {
@@ -135,17 +83,19 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
     }
 
     @Override
-    public boolean remove(E value) {
+    public boolean remove(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
+        @SuppressWarnings("unchecked")
+        E key = (E) value;
         if (root == null) {
             return false;
         }
         Node parent = root;
         Node curr = root;
         int cmp;
-        while ((cmp = compare(curr.value, value)) != 0) {
+        while ((cmp = compare(curr.value, key)) != 0) {
             parent = curr;
             if (cmp > 0) {
                 curr = curr.left;
@@ -185,6 +135,7 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
         return true;
     }
 
+
     private void reLink(Node parent, Node curr, Node child) {
         if (parent == curr) {
             root = child;
@@ -201,24 +152,95 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
     }
 
     @Override
-    public List<E> inorderTraverse() {
-        List<E> list = new ArrayList<E>(size);
-        inorderTraverse(root, list);
-        return list;
+    public E first() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("set is empty, no first element");
+        }
+        Node curr = root;
+        while (curr.left != null) {
+            curr = curr.left;
+        }
+        return curr.value;
     }
 
-    private void inorderTraverse(Node curr, List<E> list) {
-        if (curr == null) {
-            return;
+    @Override
+    public E last() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("set is empty, no last element");
         }
-        inorderTraverse(curr.left, list);
-        list.add(curr.value);
-        inorderTraverse(curr.right, list);
+        Node curr = root;
+        while (curr.right != null) {
+            curr = curr.right;
+        }
+        return curr.value;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public SortedSet<E> subSet(E fromElement, E toElement) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SortedSet<E> headSet(E toElement) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SortedSet<E> tailSet(E fromElement) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String toString() {
-        return "BST{" + root + "}";
+        StringBuilder sb = new StringBuilder("BST{");
+        sb.append("size=").append(size).append(", ");
+        sb.append("tree={");
+        inorderTraverse(root, sb);
+        sb.append("}}");
+        return sb.toString();
+    }
+
+    private void inorderTraverse(Node curr, StringBuilder sb) {
+        if (curr == null) {
+            return;
+        }
+        inorderTraverse(curr.left, sb);
+        sb.append(curr.value).append(",");
+        inorderTraverse(curr.right, sb);
+    }
+
+    class Node {
+
+        E value;
+        Node left;
+        Node right;
+        Node(E value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("N{");
+            sb.append("d=").append(value);
+            if (left != null) {
+                sb.append(", l=").append(left);
+            }
+            if (right != null) {
+                sb.append(", r=").append(right);
+            }
+            sb.append('}');
+            return sb.toString();
+        }
     }
 
     public static void main(String[] args) {
@@ -226,18 +248,13 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
         tree.add(10);
         tree.add(5);
         tree.add(15);
-        System.out.println(tree.inorderTraverse());
-        System.out.println(tree.size);
         System.out.println(tree);
         tree.remove(10);
         tree.remove(15);
-        System.out.println(tree.size);
         System.out.println(tree);
         tree.remove(5);
-        System.out.println(tree.size);
         System.out.println(tree);
         tree.add(15);
-        System.out.println(tree.size);
         System.out.println(tree);
 
         System.out.println("------------");
@@ -246,7 +263,7 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
         for (int i = 0; i < 15; i++) {
             tree.add(rnd.nextInt(50));
         }
-        System.out.println(tree.inorderTraverse());
+        System.out.println(tree);
         tree = new BinarySearchTree<>((v1, v2) -> {
             // Even first
             final int c = Integer.compare(v1 % 2, v2 % 2);
@@ -255,6 +272,6 @@ public class BinarySearchTree<E extends Comparable<E>> implements ISortedSet<E> 
         for (int i = 0; i < 15; i++) {
             tree.add(rnd.nextInt(50));
         }
-        System.out.println(tree.inorderTraverse());
+        System.out.println(tree);
     }
 }

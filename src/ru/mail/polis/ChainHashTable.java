@@ -1,35 +1,17 @@
 package ru.mail.polis;
 
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-public class ChainHashTable<E extends Comparable<E>> implements ISet<E> {
-
-    class Node {
-        E value;
-        Node next;
-
-        Node(E value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            List<E> values = new ArrayList<>();
-            Node curr = this;
-            while (curr != null) {
-                values.add(curr.value);
-                curr = curr.next;
-            }
-            return values.toString();
-        }
-    }
+public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> implements Set<E> {
 
     private final int INITIAL_CAPACITY = 8;
-//    private final float LOAD_FACTOR = 0.5f;
-
     private Comparator<E> comparator;
+//    private final float LOAD_FACTOR = 0.5f;
     private Object[] table;
     private int size;
 
@@ -43,18 +25,11 @@ public class ChainHashTable<E extends Comparable<E>> implements ISet<E> {
     }
 
     @Override
-    public int size() {
-        return size;
-    }
+    public boolean contains(Object value) {
+        @SuppressWarnings("unchecked")
+        E key = (E) value;
 
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public boolean contains(E value) {
-        Node curr = getNode(hash(value));
+        Node curr = getNode(hash(key));
         while (curr != null && !curr.equals(value)) {
             curr = curr.next;
         }
@@ -83,11 +58,14 @@ public class ChainHashTable<E extends Comparable<E>> implements ISet<E> {
     }
 
     @Override
-    public boolean remove(E value) {
+    public boolean remove(Object value) {
+        @SuppressWarnings("unchecked")
+        E key = (E) value;
+
         Node prev = null;
-        int idx = hash(value);
+        int idx = hash(key);
         Node curr = getNode(idx);
-        while (curr != null && compare(value, curr.value) != 0) {
+        while (curr != null && compare(key, curr.value) != 0) {
             prev = curr;
             curr = curr.next;
         }
@@ -143,12 +121,42 @@ public class ChainHashTable<E extends Comparable<E>> implements ISet<E> {
         }
     }
 
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        throw new UnsupportedOperationException();
+    }
+
     private void print() {
         for (int i = 0; i < table.length; i++) {
             Node curr = getNode(i);
             System.out.println("idx = " + i + ", " + curr);
         }
         System.out.println("-------------------------");
+    }
+
+    class Node {
+        E value;
+        Node next;
+
+        Node(E value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            List<E> values = new ArrayList<>();
+            Node curr = this;
+            while (curr != null) {
+                values.add(curr.value);
+                curr = curr.next;
+            }
+            return values.toString();
+        }
     }
 
     public static void main(String[] args) {
