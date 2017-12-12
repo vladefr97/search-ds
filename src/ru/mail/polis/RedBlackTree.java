@@ -3,9 +3,10 @@ package ru.mail.polis;
 import java.util.AbstractSet;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
-public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implements SortedSet<E>, BalancedBinarySearchTree {
+public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implements BalancedSortedSet<E> {
 
     private final Comparator<E> comparator;
     private Node root; //todo: Создайте новый класс если нужно. Добавьте новые поля, если нужно.
@@ -62,6 +63,28 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
         return false;
     }
 
+    /**
+     * Ищет наименьший элемент в дереве
+     * @return Возвращает наименьший элемент в дереве
+     * @throws NoSuchElementException если дерево пустое
+     */
+    @Override
+    public E first() {
+        //todo: следует реализовать
+        throw new NoSuchElementException("first");
+    }
+
+    /**
+     * Ищет наибольший элемент в дереве
+     * @return Возвращает наибольший элемент в дереве
+     * @throws NoSuchElementException если дерево пустое
+     */
+    @Override
+    public E last() {
+        //todo: следует реализовать
+        throw new NoSuchElementException("last");
+    }
+
     private int compare(E v1, E v2) {
         return comparator == null ? v1.compareTo(v2) : comparator.compare(v1, v2);
     }
@@ -97,16 +120,6 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
     @Override
     public SortedSet<E> tailSet(E fromElement) {
         throw new UnsupportedOperationException("tailSet");
-    }
-
-    @Override
-    public E first() {
-        throw new UnsupportedOperationException("first");
-    }
-
-    @Override
-    public E last() {
-        throw new UnsupportedOperationException("last");
     }
 
     @Override

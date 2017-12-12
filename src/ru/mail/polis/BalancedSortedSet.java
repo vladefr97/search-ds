@@ -1,6 +1,8 @@
 package ru.mail.polis;
 
-public interface BalancedBinarySearchTree {
+import java.util.SortedSet;
+
+public interface BalancedSortedSet<E> extends SortedSet<E>  {
 
     /**
      * Обходит дерево и проверяет сбалансированность
