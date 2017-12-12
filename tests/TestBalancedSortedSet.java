@@ -3,18 +3,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
@@ -30,23 +25,19 @@ import ru.mail.polis.RedBlackTree;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(value = Parameterized.class)
-public class TestBalancedSortedSet {
+public class TestBalancedSortedSet extends AbstractSetTest {
 
-    static class NamedComparator<E> {
+    static protected class NamedComparator<E> {
         String name;
         Comparator<E> comparator;
 
-        public NamedComparator(String name, Comparator<E> comparator) {
+        NamedComparator(String name, Comparator<E> comparator) {
             this.name = name;
             this.comparator = comparator;
         }
     }
 
-    private static final Random RANDOM = new Random();
-
     //todo: Закомментируйте или модифицируйте параметры если что-то ещё не реализовано и тестируйте
-
-    private static final boolean ENABLED_REMOVE = false;
 
     private static final Class<?>[] testClasses = (Class<?>[]) new Class<?>[]{
             AVLTree.class,
@@ -54,21 +45,12 @@ public class TestBalancedSortedSet {
     };
 
     @SuppressWarnings("unchecked")
-    private static final NamedComparator<Integer>[] comparators = (NamedComparator<Integer>[]) new NamedComparator[]{
-            new NamedComparator<Integer>("NULL", null),
-            new NamedComparator<Integer>("REVERSE_ORDER", Comparator.reverseOrder()),
-            new NamedComparator<Integer>("NATURAL_ORDER", Comparator.naturalOrder()),
-            new NamedComparator<Integer>("EVEN_FIRST", Comparator.comparingInt((Integer v) -> v % 2).thenComparingInt(v -> v)),
-            new NamedComparator<Integer>("ALL_EQUALS", (v1, v2) -> 0),
-    };
-
-    //todo: ^^^^^^^^^^^^^
-
-    @Rule
-    public TestRule watcher = new TestWatcher() {
-        protected void starting(final Description description) {
-            System.err.println("=== Running " + description.getMethodName());
-        }
+    private static final TestBalancedSortedSet.NamedComparator<Integer>[] comparators = (TestBalancedSortedSet.NamedComparator<Integer>[]) new TestBalancedSortedSet.NamedComparator[]{
+            new TestBalancedSortedSet.NamedComparator<Integer>("NULL", null),
+            new TestBalancedSortedSet.NamedComparator<Integer>("REVERSE_ORDER", Comparator.reverseOrder()),
+            new TestBalancedSortedSet.NamedComparator<Integer>("NATURAL_ORDER", Comparator.naturalOrder()),
+            new TestBalancedSortedSet.NamedComparator<Integer>("EVEN_FIRST", Comparator.comparingInt((Integer v) -> v % 2).thenComparingInt(v -> v)),
+            new TestBalancedSortedSet.NamedComparator<Integer>("ALL_EQUALS", (v1, v2) -> 0),
     };
 
     @Parameterized.Parameter()
@@ -111,89 +93,86 @@ public class TestBalancedSortedSet {
 
     @Test
     public void test02_add() {
-        check(validSortedSet, testSortedSet, 5, true);
+        check(validSortedSet, testSortedSet, 5, TransformOperation.ADD);
     }
 
     @Test
     public void test02_someAdd() {
         for (int value = 0; value < 10; value++) {
-            check(validSortedSet, testSortedSet, value, true);
+            check(validSortedSet, testSortedSet, value, TransformOperation.ADD);
         }
     }
 
     @Test
     public void test03_AddWithRemove() {
-        check(validSortedSet, testSortedSet, 5, true);
-        check(validSortedSet, testSortedSet, 5, false);
+        check(validSortedSet, testSortedSet, 5, TransformOperation.ADD);
+        check(validSortedSet, testSortedSet, 5, TransformOperation.REMOVE);
     }
 
     @Test
     public void test04_someAddWithRemove() {
         for (int value = 0; value < 10; value++) {
-            check(validSortedSet, testSortedSet, value, true);
+            check(validSortedSet, testSortedSet, value, TransformOperation.ADD);
         }
         for (int value = 0; value < 10; value++) {
-            check(validSortedSet, testSortedSet, value, false);
+            check(validSortedSet, testSortedSet, value, TransformOperation.REMOVE);
         }
     }
 
     @Test
     public void test05_small() {
         for (int value = 0; value < 10; value++) {
-            check(validSortedSet, testSortedSet, value, true);
+            check(validSortedSet, testSortedSet, value, TransformOperation.ADD);
         }
         for (int value = 10; value >= 0; value--) {
-            check(validSortedSet, testSortedSet, value, false);
+            check(validSortedSet, testSortedSet, value, TransformOperation.REMOVE);
         }
         for (int value = 0; value >= -10; value--) {
-            check(validSortedSet, testSortedSet, value, false);
+            check(validSortedSet, testSortedSet, value, TransformOperation.REMOVE);
         }
         for (int value = -10; value < 0; value++) {
-            check(validSortedSet, testSortedSet, value, true);
+            check(validSortedSet, testSortedSet, value, TransformOperation.ADD);
         }
     }
 
     @Test
     public void test06_middle() {
         for (int value = 0; value < 15; value++) {
-            check(validSortedSet, testSortedSet, value, true);
+            check(validSortedSet, testSortedSet, value, TransformOperation.ADD);
         }
         for (int value = 15; value < 30; value++) {
-            check(validSortedSet, testSortedSet, value, true);
+            check(validSortedSet, testSortedSet, value, TransformOperation.ADD);
             if (value % 2 == 0) {
-                check(validSortedSet, testSortedSet, value, false);
+                check(validSortedSet, testSortedSet, value, TransformOperation.REMOVE);
             }
         }
         for (int value = 100; value >= 0; value--) {
-            check(validSortedSet, testSortedSet, value, false);
+            check(validSortedSet, testSortedSet, value, TransformOperation.REMOVE);
         }
     }
 
     @Test
     public void test07_bigRandom() {
         for (int i = 0; i < 1000; i++) {
-            check(validSortedSet, testSortedSet, RANDOM.nextInt(1000), true);
+            check(validSortedSet, testSortedSet, RANDOM.nextInt(1000), TransformOperation.ADD);
         }
         for (int i = 0; i < 1000; i++) {
-            check(validSortedSet, testSortedSet, RANDOM.nextInt(1000), false);
+            check(validSortedSet, testSortedSet, RANDOM.nextInt(1000), TransformOperation.REMOVE);
         }
     }
 
-    private <E> void check(SortedSet<E> validSortedSet, BalancedSortedSet<E> testSortedSet, E value, boolean add) {
+    private <E> void check(SortedSet<E> validSortedSet, BalancedSortedSet<E> testSortedSet, E value, TransformOperation transformOperation) {
         checkFirstAndLast(validSortedSet, testSortedSet);
-        checkTransformOperation(validSortedSet, testSortedSet, value, add);
+        checkTransformOperation(validSortedSet, testSortedSet, value, transformOperation);
+        checkBalanced(testSortedSet);
         checkSizeAndContains(validSortedSet, testSortedSet, value);
-        checkTransformOperation(validSortedSet, testSortedSet, value, add);
+        checkTransformOperation(validSortedSet, testSortedSet, value, transformOperation);
+        checkBalanced(testSortedSet);
         checkSizeAndContains(validSortedSet, testSortedSet, value);
         checkFirstAndLast(validSortedSet, testSortedSet);
     }
 
-    private <E> void checkTransformOperation(SortedSet<E> validSortedSet, BalancedSortedSet<E> testSortedSet, E value, boolean add) {
-        if (add) {
-            Assert.assertTrue("add", validSortedSet.add(value) == testSortedSet.add(value));
-        } else if (ENABLED_REMOVE) {
-            Assert.assertTrue("remove", validSortedSet.remove(value) == testSortedSet.remove(value));
-        }
+    private <E> void checkBalanced(BalancedSortedSet<E> balancedSortedSet) {
         try {
             testSortedSet.checkBalanced();
         } catch (NotBalancedTreeException e) {
@@ -219,11 +198,6 @@ public class TestBalancedSortedSet {
             Assert.assertEquals("first", validSortedSet.first(), testSortedSet.first());
             Assert.assertEquals("last", validSortedSet.last(), testSortedSet.last());
         }
-    }
-
-    private <E> void checkSizeAndContains(SortedSet<E> validSortedSet, SortedSet<E> testSortedSet, E value) {
-        Assert.assertTrue("size", validSortedSet.size() == testSortedSet.size());
-        Assert.assertTrue("contains", validSortedSet.contains(value) == testSortedSet.contains(value));
     }
 
     @SuppressWarnings("unchecked")

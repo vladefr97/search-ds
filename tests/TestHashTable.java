@@ -1,28 +1,19 @@
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import ru.mail.polis.BalancedSortedSet;
 import ru.mail.polis.ChainHashTable;
-import ru.mail.polis.NotBalancedTreeException;
-import ru.mail.polis.OpenHashTable;
 
 /**
  * Created by Nechaev Mikhail
  * Since 12/12/2017.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestHashTable {
-
-    private static final Random RANDOM = new Random();
+public class TestHashTable extends AbstractSetTest {
 
     private Set<String> validSet;
     private Set<String> testSet;
@@ -38,7 +29,7 @@ public class TestHashTable {
         String value = "b";
         for (int i = 0; i < 5; i++) {
             value = value + "a";
-            check(validSet, testSet, value, true);
+            check(validSet, testSet, value, TransformOperation.ADD);
         }
     }
 
@@ -47,21 +38,21 @@ public class TestHashTable {
         String value = "b";
         for (int i = 0; i < 20; i++) {
             value = value + "a";
-            check(validSet, testSet, value, true);
+            check(validSet, testSet, value, TransformOperation.ADD);
         }
         for (int i = 20; i >= 0; i--) {
             value = value.substring(0, value.length() - 1);
-            check(validSet, testSet, value, false);
+            check(validSet, testSet, value, TransformOperation.REMOVE);
         }
     }
 
     @Test
     public void test03() {
         for (int i = 0; i < 1000; i++) {
-            check(validSet, testSet, gen(), true);
+            check(validSet, testSet, gen(), TransformOperation.ADD);
         }
         for (int i = 0; i < 1000; i++) {
-            check(validSet, testSet, gen(), false);
+            check(validSet, testSet, gen(), TransformOperation.REMOVE);
         }
     }
 
@@ -73,28 +64,12 @@ public class TestHashTable {
         return sb.toString();
     }
 
-    private void check(Set<String> validSet, Set<String> testSet, char c, boolean add) {
-        check(validSet, testSet, "" + c, add);
-    }
-
-    private void check(Set<String> validSet, Set<String> testSet, String value, boolean add) {
+    private void check(Set<String> validSet, Set<String> testSet, String value, TransformOperation transformOperation) {
         checkSizeAndContains(validSet, testSet, value);
-        checkTransformOperation(validSet, testSet, value, add);
+        checkTransformOperation(validSet, testSet, value, transformOperation);
         checkSizeAndContains(validSet, testSet, value);
-        checkTransformOperation(validSet, testSet, value, add);
+        checkTransformOperation(validSet, testSet, value, transformOperation);
         checkSizeAndContains(validSet, testSet, value);
     }
 
-    private <E> void checkTransformOperation(Set<E> validSet, Set<E> testSet, E value, boolean add) {
-        if (add) {
-            Assert.assertTrue("add", validSet.add(value) == testSet.add(value));
-        } else {
-            Assert.assertTrue("remove", validSet.remove(value) == testSet.remove(value));
-        }
-    }
-
-    private <E> void checkSizeAndContains(Set<E> validSet, Set<E> testSet, E value) {
-        Assert.assertTrue("size", validSet.size() == testSet.size());
-        Assert.assertTrue("contains", validSet.contains(value) == testSet.contains(value));
-    }
 }
