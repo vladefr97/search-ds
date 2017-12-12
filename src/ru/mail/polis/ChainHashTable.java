@@ -2,70 +2,64 @@ package ru.mail.polis;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> implements Set<E> {
+public class ChainHashTable<E> extends AbstractSet<E> implements Set<E> {
 
     private final int INITIAL_CAPACITY = 8;
-    private Comparator<E> comparator;
 //    private final float LOAD_FACTOR = 0.5f;
     private Object[] table;
     private int size;
 
     public ChainHashTable() {
-        this(null);
-    }
-
-    public ChainHashTable(Comparator<E> comparator) {
-        this.comparator = comparator;
         this.table = new Object[INITIAL_CAPACITY];
     }
 
-    @Override
-    public boolean contains(Object value) {
-        @SuppressWarnings("unchecked")
-        E key = (E) value;
-
-        Node curr = getNode(hash(key));
-        while (curr != null && compare(key, curr.value) != 0) {
-            curr = curr.next;
-        }
-        //Вышли по второму условию
-        return curr != null;
-    }
-
+    /**
+     * Вставляет элемент в хеш-таблицу.
+     * Инвариант: на вход всегда приходит NotNull объект, который имеет корректный тип
+     *
+     * @param value элемент который необходимо вставить
+     * @return true, если элемент в хеш-таблице отсутствовал
+     */
     @Override
     public boolean add(E value) {
         int idx = hash(value);
         if (table[idx] == null) {
-            table[idx] = new Node(value);
+            table[idx] = new Node<>(value);
         } else {
             Node curr = getNode(idx);
-            while (curr.next != null && compare(value, curr.value) != 0) {
+            while (curr.next != null && !value.equals(curr.value)) {
                 curr = curr.next;
             }
-            if (compare(value, curr.value) == 0) {
+            if (value.equals(curr.value)) {
                 return false;
             }
-            curr.next = new Node(value);
+            curr.next = new Node<>(value);
         }
         size++;
         resize();
         return true;
     }
 
+    /**
+     * Удаляет элемент с таким же значением из хеш-таблицы.
+     * Инвариант: на вход всегда приходит NotNull объект, который имеет корректный тип
+     *
+     * @param object элемент который необходимо вставить
+     * @return true, если элемент содержался в хеш-таблице
+     */
     @Override
-    public boolean remove(Object value) {
+    public boolean remove(Object object) {
         @SuppressWarnings("unchecked")
-        E key = (E) value;
+        E value = (E) object;
 
         Node prev = null;
-        int idx = hash(key);
+        int idx = hash(value);
         Node curr = getNode(idx);
-        while (curr != null && compare(key, curr.value) != 0) {
+        while (curr != null && !value.equals(curr.value)) {
             prev = curr;
             curr = curr.next;
         }
@@ -83,17 +77,33 @@ public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> impl
         return false;
     }
 
+    /**
+     * Ищет элемент с таким же значением в хеш-таблице.
+     * Инвариант: на вход всегда приходит NotNull объект, который имеет корректный тип
+     *
+     * @param object элемент который необходимо поискать
+     * @return true, если такой элемент содержится в хеш-таблице
+     */
+    @Override
+    public boolean contains(Object object) {
+        @SuppressWarnings("unchecked")
+        E value = (E) object;
+
+        Node curr = getNode(hash(value));
+        while (curr != null && !value.equals(curr.value)) {
+            curr = curr.next;
+        }
+        //Вышли по второму условию
+        return curr != null;
+    }
+
     private int hash(E value) {
         return Math.abs(value.hashCode()) % table.length;
     }
 
     @SuppressWarnings("unchecked")
-    private Node getNode(int idx) {
-        return (Node) table[idx];
-    }
-
-    private int compare(E v1, E v2) {
-        return comparator == null ? v1.compareTo(v2) : comparator.compare(v1, v2);
+    private Node<E> getNode(int idx) {
+        return (Node<E>) table[idx];
     }
 
     @SuppressWarnings("unchecked")
@@ -105,9 +115,9 @@ public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> impl
         size = 0;
         table = new Object[table.length << 1];
         for (int i = 0; i < old.length; i++) {
-            Node node = (Node) old[i];
+            Node<E> node = (Node<E>) old[i];
             if (node != null) {
-                Node curr = node;
+                Node<E> curr = node;
                 while (curr != null) {
                     Node next = curr.next;
                     //FIXME: insert value in head (all unique)
@@ -131,17 +141,9 @@ public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> impl
         throw new UnsupportedOperationException();
     }
 
-    private void print() {
-        for (int i = 0; i < table.length; i++) {
-            Node curr = getNode(i);
-            System.out.println("idx = " + i + ", " + curr);
-        }
-        System.out.println("-------------------------");
-    }
-
-    class Node {
+    private static class Node<E> {
         E value;
-        Node next;
+        Node<E> next;
 
         Node(E value) {
             this.value = value;
@@ -150,7 +152,7 @@ public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> impl
         @Override
         public String toString() {
             List<E> values = new ArrayList<>();
-            Node curr = this;
+            Node<E> curr = this;
             while (curr != null) {
                 values.add(curr.value);
                 curr = curr.next;
@@ -159,25 +161,4 @@ public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> impl
         }
     }
 
-    public static void main(String[] args) {
-        /*
-        HashTableChain<Integer> table = new HashTableChain<>();
-        for (int i = 0; i < 10; i++) {
-            table.add(i);
-        }
-        table.print();
-        for (int i = 5; i < 10; i++) {
-            table.remove(i);
-        }
-        table.print();
-        */
-        ChainHashTable<String> ts = new ChainHashTable<>();
-        ts.add("abc");
-        ts.add("abc");
-        ts.add("bcd");
-        ts.add("cde");
-        ts.add("qwerty");
-        ts.add("polis");
-        ts.print();
-    }
 }
