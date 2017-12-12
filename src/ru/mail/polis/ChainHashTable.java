@@ -30,7 +30,7 @@ public class ChainHashTable<E extends Comparable<E>> extends AbstractSet<E> impl
         E key = (E) value;
 
         Node curr = getNode(hash(key));
-        while (curr != null && !curr.equals(value)) {
+        while (curr != null && compare(key, curr.value) != 0) {
             curr = curr.next;
         }
         //Вышли по второму условию
