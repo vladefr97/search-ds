@@ -107,7 +107,6 @@ public class TestBalancedSortedSet {
     public void test01_emptyAndNull() {
         checkFirstAndLast(validSortedSet, testSortedSet);
         checkSizeAndContains(validSortedSet, testSortedSet, 0);
-        checkBalance(testSortedSet);
     }
 
     @Test
@@ -181,34 +180,24 @@ public class TestBalancedSortedSet {
     }
 
     private <E> void check(SortedSet<E> validSortedSet, BalancedSortedSet<E> testSortedSet, E value, boolean add) {
-        checkBalance(testSortedSet);
         checkFirstAndLast(validSortedSet, testSortedSet);
-        checkBalance(testSortedSet);
         checkTransformOperation(validSortedSet, testSortedSet, value, add);
-        checkBalance(testSortedSet);
         checkSizeAndContains(validSortedSet, testSortedSet, value);
-        checkBalance(testSortedSet);
         checkTransformOperation(validSortedSet, testSortedSet, value, add);
-        checkBalance(testSortedSet);
         checkSizeAndContains(validSortedSet, testSortedSet, value);
-        checkBalance(testSortedSet);
         checkFirstAndLast(validSortedSet, testSortedSet);
-        checkBalance(testSortedSet);
     }
 
-    private <E> void checkBalance(BalancedSortedSet<E> balancedSortedSet) {
-        try {
-            balancedSortedSet.checkBalanced();
-        } catch (NotBalancedTreeException e) {
-            Assert.fail(e.getMessage());
-        }
-    }
-
-    private <E> void checkTransformOperation(SortedSet<E> validSortedSet, SortedSet<E> testSortedSet, E value, boolean add) {
+    private <E> void checkTransformOperation(SortedSet<E> validSortedSet, BalancedSortedSet<E> testSortedSet, E value, boolean add) {
         if (add) {
             Assert.assertTrue("add", validSortedSet.add(value) == testSortedSet.add(value));
         } else if (ENABLED_REMOVE) {
             Assert.assertTrue("remove", validSortedSet.remove(value) == testSortedSet.remove(value));
+        }
+        try {
+            testSortedSet.checkBalanced();
+        } catch (NotBalancedTreeException e) {
+            Assert.fail(e.getMessage());
         }
     }
 
