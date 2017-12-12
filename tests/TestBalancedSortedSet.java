@@ -44,7 +44,7 @@ public class TestBalancedSortedSet {
 
     private static final Random RANDOM = new Random();
 
-    //todo: Закомментируйте или модифицируйте параметры есть что-то ещё не работает и тестируйте
+    //todo: Закомментируйте или модифицируйте параметры если что-то ещё не реализовано и тестируйте
 
     private static final boolean ENABLED_REMOVE = false;
 
