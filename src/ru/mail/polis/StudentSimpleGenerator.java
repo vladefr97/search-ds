@@ -52,7 +52,7 @@ public class StudentSimpleGenerator {
         return instance;
     }
 
-    private Student generate() {
+    public Student generate() {
         Gender gender = random.nextBoolean() ? Gender.MALE : Gender.FEMALE;
         String[] firstNames = gender == Gender.MALE ? maleFirstNames : femaleFirstNames;
         String firstName = firstNames[random.nextInt(firstNames.length)];
