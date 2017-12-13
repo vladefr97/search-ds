@@ -4,7 +4,7 @@ import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class OpenHashTable<E> extends AbstractSet<E> implements Set<E> {
+public class OpenHashTable<E extends OpenHashTableEntity> extends AbstractSet<E> implements Set<E> {
 
     private int size;
 
@@ -22,6 +22,7 @@ public class OpenHashTable<E> extends AbstractSet<E> implements Set<E> {
     @Override
     public boolean add(E value) {
         //todo: следует реализовать
+        //Используйте value.hashCode(tableSize, probId) для вычисления хеша
         return false;
     }
 
@@ -37,6 +38,7 @@ public class OpenHashTable<E> extends AbstractSet<E> implements Set<E> {
         @SuppressWarnings("unchecked")
         E value = (E) object;
         //todo: следует реализовать
+        //Используйте value.hashCode(tableSize, probId) для вычисления хеша
         return false;
     }
 
@@ -52,6 +54,7 @@ public class OpenHashTable<E> extends AbstractSet<E> implements Set<E> {
         @SuppressWarnings("unchecked")
         E value = (E) object;
         //todo: следует реализовать
+        //Используйте value.hashCode(tableSize, probId) для вычисления хеша
         return false;
     }
 
