@@ -1,6 +1,6 @@
 package ru.mail.polis;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by Nechaev Mikhail
@@ -8,12 +8,14 @@ import java.util.Date;
  */
 public class Student extends CheckedOpenHashTableEntity {
 
+    private static int counter = 0;
+
     //NotNullable поля
     private long id; //Уникальный идентификатор студента
     private String firstName;
     private String lastName;
     private Gender gender;
-    private Date birthday;
+    private LocalDate birthday;
     private int groupId; //Идентификатор группы в которой учится студент
     private int yearOfAdmission; //Год поступления
     //Nullable поля
@@ -31,8 +33,8 @@ public class Student extends CheckedOpenHashTableEntity {
         MALE, FEMALE
     }
 
-    public Student(long id, String firstName, String lastName, Gender gender, Date birthday, int groupId, int yearOfAdmission) {
-        this.id = id;
+    public Student(String firstName, String lastName, Gender gender, LocalDate birthday, int groupId, int yearOfAdmission) {
+        this.id = counter++;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
@@ -41,15 +43,9 @@ public class Student extends CheckedOpenHashTableEntity {
         this.yearOfAdmission = yearOfAdmission;
     }
 
-    public Student(long id, String firstName, String lastName, Gender gender, Date birthday, int groupId,
+    public Student(String firstName, String lastName, Gender gender, LocalDate birthday, int groupId,
                    int yearOfAdmission, String photoReference, String email, String mobile) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.birthday = birthday;
-        this.groupId = groupId;
-        this.yearOfAdmission = yearOfAdmission;
+        this(firstName, lastName, gender, birthday, groupId, yearOfAdmission);
         this.photoReference = photoReference;
         this.email = email;
         this.mobile = mobile;
@@ -71,7 +67,7 @@ public class Student extends CheckedOpenHashTableEntity {
         return gender;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
@@ -87,12 +83,24 @@ public class Student extends CheckedOpenHashTableEntity {
         return photoReference;
     }
 
+    public void setPhotoReference(String photoReference) {
+        this.photoReference = photoReference;
+    }
+
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getMobile() {
         return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     @Override
@@ -128,5 +136,21 @@ public class Student extends CheckedOpenHashTableEntity {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (mobile != null ? mobile.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender=" + gender +
+                ", birthday=" + birthday +
+                ", groupId=" + groupId +
+                ", yearOfAdmission=" + yearOfAdmission +
+                ", photoReference='" + photoReference + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                '}';
     }
 }
