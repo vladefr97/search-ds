@@ -10,9 +10,9 @@ import ru.mail.polis.Student.Gender;
  * Created by Nechaev Mikhail
  * Since 13/12/2017.
  */
-public class StudentSimpleGenerator {
+public class SimpleStudentGenerator {
 
-    private static StudentSimpleGenerator instance = new StudentSimpleGenerator();
+    private static SimpleStudentGenerator instance = new SimpleStudentGenerator();
 
     private final static String URL_PREFIX = "https://polis.mail.ru/photo/id=";
     private final static LocalDate MIN_YEAR_OF_BIRTHDAY = LocalDate.of(1990, 1, 1);
@@ -44,11 +44,11 @@ public class StudentSimpleGenerator {
             "ШАБАЛДИН", "ЩАВЕЛЕВ", "ЭВАРНИЦКИЙ", "ЮБЕРОВ", "ЯВЛАШКИН"
     };
 
-    private StudentSimpleGenerator() {
+    private SimpleStudentGenerator() {
         /* empty */
     }
 
-    public static StudentSimpleGenerator getInstance() {
+    public static SimpleStudentGenerator getInstance() {
         return instance;
     }
 
