@@ -6,6 +6,7 @@ package ru.mail.polis;
  */
 public class NotBalancedTreeException extends Exception {
 
+
     public NotBalancedTreeException(String message) {
         super(message);
     }

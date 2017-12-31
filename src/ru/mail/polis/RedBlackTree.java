@@ -11,11 +11,13 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
     private final Comparator<E> comparator;
     private Node root; //todo: Создайте новый класс если нужно. Добавьте новые поля, если нужно.
     private int size;
+    Node nil = new Node();
     //todo: добавьте дополнительные переменные и/или методы если нужно
 
     public RedBlackTree() {
         this(null);
     }
+
     public RedBlackTree(Comparator<E> comparator) {
         this.comparator = comparator;
     }
@@ -30,8 +32,71 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
     @Override
     public boolean add(E value) {
         //todo: следует реализовать
+        RBInsert(new Node(value));
+        root = root;
+        size++;
         return false;
     }
+
+    private void RBInsert(Node z) {
+
+        if (root == null) {
+            root = z;
+            root.color = Color.BLACK;
+            root.right = nil;
+            root.left = nil;
+            return;
+        }
+        Node y = new Node();
+        Node x = root;
+
+        while (x != nil) {
+            y = x;
+            if (compare((E) x.value, (E) z.value) > 0)
+                x = x.left;
+            else x = x.right;
+        }
+        z.parent = y;
+        if (y == nil) {
+            root = z;
+        } else {
+            if (compare((E) z.value, (E) y.value) < 0)
+                y.left = z;
+            else y.right = z;
+        }
+        z.left = nil;
+        z.right = nil;
+        z.color = Color.RED;
+        RBFixup(z);
+    }
+
+    private void RBFixup(Node z) {
+        Node y = new Node();
+        while (z.parent.color != Color.RED) {
+            if (z.parent == z.parent.parent.left) {
+                y = z.parent.parent.right;
+                if (y.color == Color.RED) {
+                    z.parent.color = Color.BLACK;
+                    y.color = Color.BLACK;
+                    z.parent.parent.color = Color.RED;
+                    z = z.parent.parent;
+
+                } else if (z == z.parent.right) {
+                    z=z.parent;
+                    leftRotation();
+
+                }
+                z.parent.color=Color.BLACK;
+                z.parent.parent.color=Color.RED;
+
+            }
+
+        }
+    }
+
+    private void leftRotation() {
+    }
+
 
     /**
      * Удаляет элемент с таким же значением из дерева.
@@ -65,6 +130,7 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
 
     /**
      * Ищет наименьший элемент в дереве
+     *
      * @return Возвращает наименьший элемент в дереве
      * @throws NoSuchElementException если дерево пустое
      */
@@ -76,6 +142,7 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
 
     /**
      * Ищет наибольший элемент в дереве
+     *
      * @return Возвращает наибольший элемент в дереве
      * @throws NoSuchElementException если дерево пустое
      */
@@ -147,7 +214,7 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
     }
 
     private int traverseTreeAndCheckBalanced(Node node) throws NotBalancedTreeException {
-        if (node == null) {
+        if (node == nil) {
             return 1;
         }
         int leftBlackHeight = traverseTreeAndCheckBalanced(node.left);
@@ -181,6 +248,17 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
         Node<E> right;
         Node<E> parent;
         Color color = Color.BLACK;
+        private boolean nil = true;
+
+        public Node() {
+        }
+
+        public Node(E value) {
+            this.value = value;
+            nil = false;
+            color = Color.RED;
+        }
+
 
         @Override
         public String toString() {
@@ -188,7 +266,7 @@ public class RedBlackTree<E extends Comparable<E>> extends AbstractSet<E> implem
                     "value=" + value +
                     ", left=" + left +
                     ", right=" + right +
-                    ", parent=" + parent +
+                    //", parent=" + parent +
                     ", color=" + color +
                     '}';
         }
